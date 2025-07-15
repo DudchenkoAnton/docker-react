@@ -2,8 +2,7 @@ name: CI/CD Pipeline
 on:
   push:
     branches:
-      - master
-      - feature/*
+      - "**"
   pull_request:
     branches:
       - master
@@ -23,7 +22,7 @@ jobs:
 
   deploy:
     needs: test
-    if: github.ref == 'refs/heads/master' && github.event_name == 'push'
+    if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -42,6 +41,6 @@ jobs:
         run: docker build -t docker-react-prod .
       - name: Deploy to Elastic Beanstalk
         run: |
-          eb init -p docker docker-react --region ${{ secrets.AWS_REGION }}
-          eb use docker-react-environment
+          eb init -p docker docker-frontend --region ${{ secrets.AWS_REGION }} --platform "Docker"
+          eb use Docker-frontend-env  # Имя твоего environment
           eb deploy
